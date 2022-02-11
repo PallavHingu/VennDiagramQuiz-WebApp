@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="columns is-vcentered">
+  <div class="column">
+    <h1 class="title">
+      Welcome, {{ name }}!
+    </h1>
+  </div>
+  <div class="column" height="300"><img src="/static/logo.jpg"></div>
+  <div class="column">
+    <h3 class="subtitle">
+      Your total points: {{ points }}
+    </h3>
+    <br>
+    <a href="{{url_for('main.leaderboard') }}" class="button is-link">Leaderboard -></a>
+  </div>
+</div>
+
+<br>
+
+<div class="columns">
+  <div class="column is-one-fifths"></div>
+  <div class="column"><a href="{{url_for('main.easyQuestions')}}" class="button is-link is-large">Easy</a></div>
+  <div class="column"><a href="{{url_for('main.hardQuestions')}}" class="button is-link is-large">Hard</a></div>
+  <div class="column is-one-fifths"></div>
+</div>
+
+
+{% endblock %}
