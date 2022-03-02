@@ -3,7 +3,90 @@
 {% block content%}
 
 <h1 class="title">
-    Hard Questions
+    Difficulty: Hard
 </h1>
+
+<h2 class="subtitle">
+    Question Number <h2 class="subtitle" id="questionNumber"></h2>
+</h2>
+
+<h2 class="subtitle" name="question" id="questionText">
+</h2>
+
+<input class="input is-large" id="answerBox" type="text" name="answer" placeholder="Your Answer">
+
+<button class="button is-block is-info is-large" id="nextQ">Submit</button>
+
+<!-- <form method="POST" action="/hard-questions/{{ question_text }}">
+
+    <h2 class="subtitle" name="question">
+        {{ question_text }}
+    </h2>
+
+    {% if is_editable %}
+    <input class="input is-large" type="text" name="answer" placeholder="Your Answer">
+    {% else %}
+    <input class="input is-large" type="text" name="answer" placeholder="Your Answer" readonly>
+    {% endif %}
+
+    <br>
+    <br>
+    <br>
+
+    <button class="button is-block is-info is-large">Submit</button>
+</form> -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+<script>
+    var question_number = 0;
+    var question_text = "";
+
+    document.getElementById("questionNumber").innerHTML = question_number.toString();
+    document.getElementById("questionText").innerHTML = question_text;
+
+    window.onload = function() {
+    document.getElementById("nextQ").click();
+};
+    $("#nextQ").click(function () {
+        input_answer = document.getElementById("answerBox").value;
+        document.getElementById("answerBox").value = "";
+        var data_list = [question_number, question_text, input_answer];
+        console.log(data_list);
+
+        $.ajax({
+            url: "/hardQuestions",
+            type: "POST",
+            data: { question_number: question_number, question_text: question_text, input_answer: input_answer },
+            success: function (response) {
+                console.log(response);
+                question_number = response[0];
+                question_text = response[1];
+
+                if (question_number == "finished") {
+                    console.log("completed all questions");
+                    location.href = "/completed-all-questions";
+                }
+
+                document.getElementById("questionNumber").innerHTML = question_number.toString();
+                document.getElementById("questionText").innerHTML = question_text;
+            },
+            error: function (xhr) {
+                console.log(error);
+            }
+        });
+
+    });
+
+    window.addEventListener("pageshow", function (event) {
+        var historyTraversal = event.persisted ||
+            (typeof window.performance != "undefined" &&
+                window.performance.navigation.type === 2);
+        if (historyTraversal) {
+            // Handle page restore.
+            window.location.reload();
+        }
+    });
+</script>
 
 {% endblock %}
