@@ -1,9 +1,21 @@
 import random
-from flask import Blueprint, jsonify, render_template, request
+from functools import wraps
+from flask import Blueprint, jsonify, render_template, request, redirect, url_for, flash
 from flask_login import current_user, login_required
 
 from .models import User, Questions, History
 from . import db
+
+def teacher_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        print("current_user.teacher", current_user.teacher)
+        if current_user.teacher == 1:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('main.index'))
+
+    return wrap
 
 main = Blueprint('main', __name__)
 
@@ -25,7 +37,6 @@ def profile():
 def leaderboard():
     #TODO - PROCESSING LEADERBOARD TABLE
     data = User.query.with_entities(User.name, User.points).order_by(User.points.desc()).limit(10).all()
-    print(">>>>>>>>>>>>>>>")
     print(data[0])
 
     return render_template('leaderboard.html', items=data)
@@ -35,6 +46,11 @@ def leaderboard():
 def easyQuestions():
     return render_template('easyQuestions.html')
 
+@main.route('/add-easy-questions')
+@login_required
+@teacher_required
+def addEasyQuestions():
+    return "adding questions page lol"
 
 @main.route('/hardQuestions', methods=['POST', 'GET'])
 @login_required
@@ -47,7 +63,6 @@ def hardQuestions1():
     print("data", data)
 
 
-    done_all_qs = False
     all_done_qs = History.query.filter_by(user_id=current_user.id).all()
     all_done_qs_ids = []
     for qs in all_done_qs:
@@ -72,13 +87,6 @@ def hardQuestions1():
 
         left_questions_ids.remove(last_Q_id)
         print("left_questions_ids line 74", left_questions_ids)
-        if len(left_questions_ids) == 0:
-            return jsonify(["finished", "finished"])
-
-        this_Q_id = random.choice(left_questions_ids)
-        print("this_Q_id", this_Q_id)
-        this_Q = Questions.query.filter_by(id=this_Q_id).first()
-        this_Q_text = this_Q.question
 
         if last_Q_answer == data['input_answer']:
             # what happens when right answer
@@ -90,13 +98,22 @@ def hardQuestions1():
             print("WRONG ANSWER")
             is_correct = False
 
-        
-
         # add completed question to history
         new_history = History(user_id=current_user.id, question_id=last_Q_id, correct=is_correct)
         print("saved to histroy")
         db.session.add(new_history)
         db.session.commit()
+
+        if len(left_questions_ids) == 0:
+            return jsonify(["finished", "finished"])
+
+        this_Q_id = random.choice(left_questions_ids)
+        print("this_Q_id", this_Q_id)
+        this_Q = Questions.query.filter_by(id=this_Q_id).first()
+        this_Q_text = this_Q.question
+
+        
+        
 
     except Exception as e:
         print("ERROR", e)
