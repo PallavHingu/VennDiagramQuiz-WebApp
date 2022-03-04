@@ -36,7 +36,7 @@ def profile():
 @login_required
 def leaderboard():
     #TODO - PROCESSING LEADERBOARD TABLE
-    data = User.query.with_entities(User.name, User.points).order_by(User.points.desc()).limit(10).all()
+    data = User.query.with_entities(User.name, User.points).filter_by(teacher = 0).order_by(User.points.desc()).limit(10).all()
     print(data[0])
 
     return render_template('leaderboard.html', items=data)
