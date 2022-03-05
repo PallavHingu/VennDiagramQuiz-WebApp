@@ -1,16 +1,31 @@
+from functools import wraps
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
 from . import db
 
 auth = Blueprint('auth', __name__)
 
+def not_loged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        print("current_user.", current_user)
+        if not current_user:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('main.index'))
+
+    return wrap
+
+
 @auth.route('/login')
+@not_loged_in
 def login():
     return render_template('login.html')
 
 @auth.route('/login', methods=['POST'])
+@not_loged_in
 def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
@@ -28,10 +43,12 @@ def login_post():
     return redirect(url_for('main.profile'))
 
 @auth.route('/signup')
+@not_loged_in
 def signup():
     return render_template('signup.html')
 
 @auth.route('/signup', methods=['POST'])
+@not_loged_in
 def signup_post():
     # code to validate and add user to database goes here
     email = request.form.get('email')

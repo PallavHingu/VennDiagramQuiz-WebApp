@@ -46,11 +46,11 @@ def leaderboard():
 def easyQuestions():
     return render_template('easyQuestions.html')
 
-@main.route('/add-easy-questions')
+@main.route('/add-hard-questions')
 @login_required
 @teacher_required
-def addEasyQuestions():
-    return "adding questions page lol"
+def addHardQuestions():
+    return render_template('addHardQuestions.html')
 
 @main.route('/hardQuestions', methods=['POST', 'GET'])
 @login_required
