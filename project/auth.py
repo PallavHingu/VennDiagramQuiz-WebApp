@@ -11,7 +11,7 @@ def not_loged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         print("current_user.", current_user)
-        if not current_user:
+        if not (hasattr(current_user, "name")):
             return f(*args, **kwargs)
         else:
             return redirect(url_for('main.index'))
