@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content%}
+
+<body>
+    <h1 class="title">Adding New Easy Questions</h1>
+    <h1 class="subtitle" id="difficulty">
+        Difficulty: Easy
+    </h1>
+
+    <input class="input is-block is-large" id="questionText" name="question" placeholder="New Question">
+    <br>
+
+    <div class="columns is-mobile is-centered">
+        <div class="column is-8">
+            <button class="button is-block is-dark is-small" id="clearB">Clear Diagram</button>
+            <div id="container" style="height: 350px;"></div>
+            </p>
+        </div>
+    </div>
+
+    <br>
+    <div id="butt">
+        <button class="button is-block is-info is-large" id="nextQ">Add Question</button>
+    </div>
+
+
+
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-venn.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.9.0/themes/pastel.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        var selected_list = [0, 0, 0, 0, 0, 0, 0];
+
+        anychart.onDocumentReady(function () {
+            // set chart theme
+            anychart.theme('pastel');
+
+            var data = [
+                {
+                    x: "A",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: "B",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: "C",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: ["A", "C"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["A", "B"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["B", "C"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["A", "B", "C"],
+                    value: 30,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                }
+            ];
+
+            // create venn diagram
+            var chart = anychart.venn(data);
+
+            // set chart stroke
+            chart.stroke('2 #fff');
+            chart.background().stroke("transparent");
+            chart.background().fill("grey 0.05");
+
+            // disable legend
+            chart.legend(false);
+
+            chart.tooltip(false);
+            chart.intersections().labels(false);
+            chart.intersections().labels(false);
+
+
+            // set container id for the chart
+            chart.container('container');
+
+            // initiate chart drawing
+            chart.draw();
+
+            chart.listen("pointsSelect", function (e) {
+                // console.log("clicked something " + e.iterator.get("x"));
+                // console.log(e.currentPoint.series.meta("selected"));
+                if (e.points.length) {
+                    console.log("---");
+                    for (var i = 0, len = e.points.length; i < len; i++) {
+                        var point = e.points[i];
+                        selected_list[point.index] = 1;
+                        console.log("selected " + point.index);
+                    }
+                } else {
+                    selected_list = [0, 0, 0, 0, 0, 0, 0];
+                    console.log("nothing selected");
+                }
+                console.log("LIST: " + selected_list.toString());
+            });
+
+
+
+
+            var question_text = ".";
+            var difficulty = 0;
+
+            $("#clearB").click(function() {
+                chart.select([]);
+            })
+
+            $("#nextQ").click(function () {
+
+                var input_answer = selected_list.toString();
+                // clear chart selection
+                chart.select([]);
+
+                question_text = document.getElementById('questionText').value;
+                var data_list = [question_text, input_answer, difficulty];
+                console.log(data_list);
+
+                $.ajax({
+                    url: "/addQs",
+                    type: "POST",
+                    data: { question_text: question_text, input_answer: input_answer, difficulty: difficulty },
+                    success: function (response) {
+                        console.log(response);
+                        // reset Qs box and chart selection
+                        if (response == "Q Added") {
+                            document.getElementById('questionText').value = "";
+                            chart.select([]);
+                        }
+                        
+                    },
+                    error: function (xhr) {
+                        console.log(error);
+                    }
+                });
+            })
+
+            window.addEventListener("pageshow", function (event) {
+                var historyTraversal = event.persisted ||
+                    (typeof window.performance != "undefined" &&
+                        window.performance.navigation.type === 2);
+                if (historyTraversal) {
+                    // Handle page restore.
+                    window.location.reload();
+                }
+            });
+
+        });
+    </script>
+
+{% endblock %}

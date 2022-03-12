@@ -2,8 +2,287 @@
 
 {% block content %}
 
-<h1 class="title">
-    Easy Questions
-</h1>
+<body>
+
+    <h1 class="subtitle" id="difficulty">
+        Difficulty: Easy
+    </h1>
+    
+    <h2 class="subtitle" id="questionNumberWrapper">
+        Question Number <span class="subtitle" id="questionNumber"></span>
+    </h2>
+
+    <h2 class="title" name="question" id="questionText">
+    </h2>
+
+    <div class="columns is-mobile is-centered">
+        <div class="column is-8">
+            <button class="button is-block is-dark is-small" id="clearB">Clear Diagram</button>
+            <div id="container" style="height: 350px;"></div>
+            </p>
+        </div>
+    </div>
+
+    <br>
+    <div id="butt">
+        <button class="button is-block is-info is-large" id="nextQ">Submit</button>
+    </div>
+
+    <h1 class="title" id="completed1">
+        All Easy Questions Completed.
+    </h1>
+
+    <h2 class="subtitle" id="completed2">
+        Come back later to check for more easy questions!
+    </h2>
+
+
+
+
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-venn.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.9.0/themes/pastel.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        var selected_list = [0, 0, 0, 0, 0, 0, 0];
+
+        anychart.onDocumentReady(function () {
+            // set chart theme
+            anychart.theme('pastel');
+
+            var data = [
+                {
+                    x: "A",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: "B",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: "C",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: ["A", "C"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["A", "B"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["B", "C"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["A", "B", "C"],
+                    value: 30,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "#8ecafb 1" },
+                    selected: { fill: "lightgreen 1" },
+                }
+            ];
+
+            // create venn diagram
+            var chart = anychart.venn(data);
+
+            // set chart stroke
+            chart.stroke('2 #fff');
+            chart.background().stroke("transparent");
+            chart.background().fill("grey 0.05");
+
+            // disable legend
+            chart.legend(false);
+
+            chart.tooltip(false);
+            chart.intersections().labels(false);
+            chart.intersections().labels(false);
+
+
+            // set container id for the chart
+            chart.container('container');
+
+            // initiate chart drawing
+            chart.draw();
+
+            chart.listen("pointsSelect", function (e) {
+                // console.log("clicked something " + e.iterator.get("x"));
+                // console.log(e.currentPoint.series.meta("selected"));
+                if (e.points.length) {
+                    console.log("---");
+                    for (var i = 0, len = e.points.length; i < len; i++) {
+                        var point = e.points[i];
+                        selected_list[point.index] = 1;
+                        console.log("selected " + point.index);
+                    }
+                } else {
+                    selected_list = [0, 0, 0, 0, 0, 0, 0];
+                    console.log("nothing selected");
+                }
+                console.log("LIST: " + selected_list.toString());
+            });
+
+
+
+
+            var question_number = 0;
+            var question_text = ".";
+
+            document.getElementById("questionNumber").innerHTML = question_number.toString();
+            document.getElementById("questionText").innerHTML = question_text;
+            document.getElementById("completed1").value = "";
+            document.getElementById("completed2").value = "";
+
+            document.getElementById("completed1").style.display = "none";
+            document.getElementById("completed2").style.display = "none";
+
+            // window.onload = function () {
+            //     document.getElementById("nextQ").click();
+            // };
+
+            window.onload = function () {
+                document.getElementById("nextQ").click();
+            };
+
+            $("#clearB").click(function() {
+                chart.select([]);
+            })
+
+            $("#nextQ").click(function () {
+                document.getElementById("completed1").value = "";
+                document.getElementById("completed2").value = "";
+
+                var input_answer = selected_list.toString();
+                // clear chart selection
+                chart.select([]);
+                var data_list = [question_number, question_text, input_answer];
+                console.log(data_list);
+
+
+                $.ajax({
+                    url: "/easyQuestions",
+                    type: "POST",
+                    data: { question_number: question_number, question_text: question_text, input_answer: input_answer },
+                    success: function (response) {
+                        console.log(response);
+                        question_number = response[0];
+                        question_text = response[1];
+
+                        if (question_number == "finished") {
+                            console.log("completed all questions");
+                            document.getElementById("difficulty").style.display = "none";
+                            document.getElementById("questionNumberWrapper").style.display = "none";
+                            document.getElementById("questionNumber").style.display = "none";
+                            document.getElementById("questionText").style.display = "none";
+                            document.getElementById("container").style.display = "none";
+                            document.getElementById("butt").style.display = "none";
+                            document.getElementById("clearB").style.display = "none";
+
+                            document.getElementById("completed1").value = "All Hard Questions Completed.";
+                            document.getElementById("completed2").value = "Come back later to check for more hard questions!";
+                            document.getElementById("completed1").style.display = "block";
+                            document.getElementById("completed2").style.display = "block";
+                        }
+                        else {
+                            document.getElementById("completed1").style.display = "none";
+                            document.getElementById("completed2").style.display = "none";
+                            document.getElementById("questionNumber").innerHTML = question_number.toString();
+                            document.getElementById("questionText").innerHTML = question_text;
+                        }
+
+                    },
+                    error: function (xhr) {
+                        console.log(error);
+                    }
+                });
+            })
+
+            window.addEventListener("pageshow", function (event) {
+                var historyTraversal = event.persisted ||
+                    (typeof window.performance != "undefined" &&
+                        window.performance.navigation.type === 2);
+                if (historyTraversal) {
+                    // Handle page restore.
+                    window.location.reload();
+                }
+            });
+
+        });
+    </script>
+
+
+
+
+    <!-- <body>
+    <div id="venn"></div>
+</body>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://rawgit.com/benfred/venn.js/master/venn.js"></script>
+<script>
+    // define sets and set set intersections
+    var sets = [{ sets: ['A'], size: 12 },
+    { sets: ['B'], size: 12 },
+    { sets: ['C'], size: 12 },
+    { sets: ['A', 'B'], size: 2 },
+    { sets: ['A', 'C'], size: 2 },
+    { sets: ['B', 'C'], size: 2 },
+    { sets: ['A B'], size: 2 }];
+
+    var chart = venn.VennDiagram();
+    var div = d3.select("#venn");
+    div.datum(sets).call(chart);
+    d3.selectAll("#venn .venn-circle path").style("fill-opacity", .2)
+
+    d3.selectAll("#venn .venn-circle")
+        .on("mouseover", function (d, i) {
+            // var node = d3.select(this).transition();
+            // node.select("path").style("fill-opacity", .8);
+            // node.select("text").style("font-weight", "100")
+            //     .style("font-size", "36px");
+
+            venn.sortAreas(div, d);
+            var selection = d3.select(this).transition("tooltip").duration(400);
+            selection.select("path")
+                .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
+                .style("stroke-opacity", 1);
+        })
+        .on("mouseout", function (d, i) {
+            var node = d3.select(this).transition();
+            node.select("path").style("fill-opacity", .2);
+            node.select("text").style("font-weight", "100")
+                .style("font-size", "24px");
+
+        })
+        // .on("click", function (d, i) {
+        //     clicked = !clicked;
+
+        //     var node = d3.select(this).transition();
+        //     node.select("path").style("fill-opacity", .8);
+        //     node.select("text").style("font-weight", "100")
+        //         .style("font-size", "36px");
+        // });
+</script> -->
+
+</body>
 
 {% endblock %}

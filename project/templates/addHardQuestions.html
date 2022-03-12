@@ -2,6 +2,86 @@
 
 {% block content%}
 
-<h1 class="title">Adding New Hard Questions</h1>
+<body>
+    <h1 class="title">Adding New Hard Questions</h1>
+
+    <h1 class="subtitle" id="difficulty">
+        Difficulty: Hard
+    </h1>
+
+    <input class="input is-block is-large" name="question" id="questionText" placeholder="New Question">
+    <br>
+    <input class="input is-large" id="answerBox" type="text" name="answer" placeholder="Answer">
+
+    <div id="butt">
+        <button class="button is-block is-info is-large" id="nextQ">Add Question</button>
+    </div>
+
+    <!-- <form method="POST" action="/hard-questions/{{ question_text }}">
+    
+        <h2 class="subtitle" name="question">
+            {{ question_text }}
+        </h2>
+    
+        {% if is_editable %}
+        <input class="input is-large" type="text" name="answer" placeholder="Your Answer">
+        {% else %}
+        <input class="input is-large" type="text" name="answer" placeholder="Your Answer" readonly>
+        {% endif %}
+    
+        <br>
+        <br>
+        <br>
+    
+        <button class="button is-block is-info is-large">Submit</button>
+    </form> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <script>
+        var question_text = "";
+        var difficulty = 1;
+
+        $("#nextQ").click(function () {
+
+            var input_question = document.getElementById("questionText").value;
+            var input_answer = document.getElementById("answerBox").value;
+
+            var data_list = [question_text, input_answer, difficulty];
+            console.log(data_list);
+
+            $.ajax({
+                url: "/addQs",
+                type: "POST",
+                data: { question_text: input_question, input_answer: input_answer, difficulty: difficulty },
+                success: function (response) {
+                    console.log(response);
+                    if (response == "Q Added") {
+                        document.getElementById("questionText").value = "";
+                        document.getElementById("answerBox").value = "";
+                    }
+
+                },
+                error: function (xhr) {
+                    console.log(error);
+                }
+            });
+
+        });
+
+        window.addEventListener("pageshow", function (event) {
+            var historyTraversal = event.persisted ||
+                (typeof window.performance != "undefined" &&
+                    window.performance.navigation.type === 2);
+            if (historyTraversal) {
+                // Handle page restore.
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+
+
+
 
 {% endblock %}
