@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="title">Manage Users</h1>
+
+<table class="table is-bordered is-striped is-hoverable is-fullwidth">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Teacher</th>
+            <th>Points</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{u.id}}</td>
+            <td>{{u.name}}</td>
+            <td>{{u.email}}</td>
+            <td>{{u.teacher}}</td>
+            <td>{{u.points}}</td>
+            <td><a href="/editUser/{{u.id}}">edit</a></td>
+            <td><form action="deleteUser/{{u.id}}" method="POST">
+                <a href="#" onclick="this.parentNode.submit()">delete</a>
+                </form></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

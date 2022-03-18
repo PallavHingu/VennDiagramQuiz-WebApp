@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content%}
+
+<h1 class="title">Questions History</h1>
+
+<table class="table is-bordered is-striped is-hoverable is-fullwidth">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>User Name</th>
+            <th>Question Id</th>
+            <th>Correct</th>
+        </tr>
+        <tr>
+            <th>
+                <input class="input" >
+            </th>
+            <th>
+                <div class="control">
+                    <div class="select">
+                        <select>
+                            <option selected>All</option>
+                            <option>Easy</option>
+                            <option>Hard</option>
+                        </select>
+                    </div>
+                </div>
+            <th>
+            <th>
+                
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for h in history %}
+        <tr>
+            <td>{{h.id}}</td>
+            <td>{{h.user_id}}</td>
+            <td>{{h.question_id}}</td>
+            <td>{{h.correct}}</td>
+            
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+
+</script>
+
+
+{% endblock %}

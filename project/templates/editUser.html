@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<body>
+
+    <input class="input is-block is-large" id="userId" name="userId" value="{{user.id}}" readonly>
+    <br>
+
+    <input class="input is-block is-large" id="userName" name="userName" value="{{user.name}}">
+    <br>
+
+    <input class="input is-block is-large" id="userEmail" name="userEmail" value="{{user.email}}">
+    <br>
+
+    <input class="input is-block is-large" id="userTeacher" name="userTeacher" type="number" value="{{user.teacher}}">
+    <br>
+
+    {% if (user.teacher == 0): %}
+    <input class="input id-block is-large" id="userPoints" name="userPoints" type="number" value="{{user.points}}">
+    {% else: %}
+    <input class="input id-block is-large" id="userPoints" name="userPoints" type="number" value="{{user.points}}" style="display: none;">
+    {% endif %}
+
+    <br><br>
+    <button class="button is-block is-large" id="save">Save</button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        $("#save").click(function () {
+
+            var user_id = document.getElementById('userId').value;
+            var user_name = document.getElementById('userName').value;
+            var user_email = document.getElementById('userEmail').value;
+            var user_teacher = document.getElementById('userTeacher').value;
+            var user_points = document.getElementById('userPoints').value;
+
+
+            $.ajax({
+                url: "/editUser",
+                type: "POST",
+                data: { user_id: user_id, user_email:user_email, user_name:user_name, user_teacher:user_teacher, user_points:user_points },
+                success: function (response) {
+                    console.log(response);
+                    if (response == "User Updated") {
+                        window.location.replace("/manageUsers");
+                    }
+
+                },
+                error: function (xhr) {
+                    console.log(error);
+                }
+            });
+        })
+    </script>
+
+</body>
+
+
+
+
+{% endblock %}

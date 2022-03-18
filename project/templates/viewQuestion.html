@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+    <h1 class="subtitle">
+        Id: {{question.id}}, 
+        Difficulty: {{question.difficulty}}
+    </h1>
+
+    
+    <input class="input is-block is-large" id="questionText" name="question" value="{{question.question}}" readonly>
+    <br>
+
+    {% if (question.difficulty == 0): %}
+    <div class="columns is-mobile is-centered">
+        <div class="column is-8">
+            <div id="container" style="height: 350px;"></div>
+            </p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-venn.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.9.0/themes/pastel.min.js"></script>
+    <script>
+        let stringList = {{question.answer|tojson}};
+
+        let list_str = stringList.split(",");
+
+        var answer_list = [];
+        for (s in list_str) {
+            answer_list.push(parseInt(list_str[s]));
+        }
+    </script>
+    <script>
+        var selected_list = [0, 0, 0, 0, 0, 0, 0];
+
+        anychart.onDocumentReady(function () {
+            // set chart theme
+            anychart.theme('pastel');
+
+            var data = [
+                {
+                    x: "A",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "grey 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: "B",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "grey 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: "C",
+                    value: 100,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "grey 1" },
+                    selected: { fill: "lightgreen 1" }
+                },
+                {
+                    x: ["A", "C"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "grey 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["A", "B"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "grey 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["B", "C"],
+                    value: 20,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "grey 1" },
+                    selected: { fill: "lightgreen 1" },
+                },
+                {
+                    x: ["A", "B", "C"],
+                    value: 30,
+                    normal: { fill: "grey 1" },
+                    hovered: { fill: "grey 1" },
+                    selected: { fill: "lightgreen 1" },
+                }
+            ];
+
+            // create venn diagram
+            var chart = anychart.venn(data);
+
+            // set chart stroke
+            chart.stroke('2 #fff');
+            chart.background().stroke("transparent");
+            chart.background().fill("grey 0.05");
+
+            // disable legend
+            chart.legend(false);
+
+
+            chart.tooltip(false);
+            chart.intersections().labels(false);
+            chart.intersections().labels(false);
+
+
+            // set container id for the chart
+            chart.container('container');
+
+            // initiate chart drawing
+            chart.draw();
+
+           
+            chart.select(answer_list);
+            chart.unhover();
+            chart.interactivity().selectionMode("none");
+            
+            chart.listen("click", function() {
+                chart.select(answer_list);
+            });
+
+        });
+    </script>
+    {% else: %}
+    <input class="input is-block is-large" id="questionText" name="question" value="{{question.answer}}" readonly>
+    {%endif%}
+    <br>
+    <button class="button is-block is-info is-large" id="goBack" onclick="window.location.href='/allQuestions'">Back</button>
+
+</body>
+
+
+
+
+{% endblock %}

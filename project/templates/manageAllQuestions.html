@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content%}
+
+<h1 class="title">Manage All Questions</h1>
+
+<table class="table is-bordered is-striped is-hoverable is-fullwidth">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Difficulty</th>
+            <th>Question</th>
+            <th>Answer</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <th>
+                <input class="input" size="2">
+            </th>
+            <th>
+                <div class="control">
+                    <div class="select">
+                        <select>
+                            <option selected>All</option>
+                            <option>Easy</option>
+                            <option>Hard</option>
+                        </select>
+                    </div>
+                </div>
+            </th>
+            <th>
+                <input class="input">
+            </th>
+            <th>
+                <input class="input">
+            </th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for q in questions %}
+        <tr>
+            <td>{{q.id}}</td>
+            <td>{{q.difficulty}}</td>
+            <td>{{q.question}}</td>
+            <td>{{q.answer}}</td>
+            <td><a href="/viewQuestion?id={{q.id}}">view</a></td>
+            <td><a href="/editQuestion?id={{q.id}}">edit</a></td>
+            <td><form action="/delQ?id={{q.id}}" method="POST">
+                <a href="#" onclick="this.parentNode.submit()">delete</a>
+                
+                </form></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+
+</script>
+
+
+{% endblock %}

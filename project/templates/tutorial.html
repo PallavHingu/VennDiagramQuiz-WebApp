@@ -1,7 +1,277 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<style>
+    h4 {
+        font-size: 1.3em;
+    }
+
+    .subtitle {
+        font-size: 1.8em;
+    }
+
+    .title {
+        font-size: 2.3em;
+        text-decoration: underline;
+    }
+</style>
+
 <h1 class="title">
     Tutorial
 </h1>
+<br>
+<h2 class="subtitle" style="font-weight: bolder;">
+    How to Use the Application
+</h2>
+<div class="has-text-left">
+
+    <h3 class="subtitle" style="font-weight: bold;">
+        Login
+    </h3>
+
+    <h4>
+        Once greeted with the main page, you must use your login details to login to the application. If however you
+        don’t
+        have an account, sign up.
+    </h4>
+
+    <br>
+
+    <h3 class="subtitle" style="font-weight: bold;">
+        For Teachers
+    </h3>
+
+    <h4>
+        Once signed in, the home screen will pop up. On this screen, you will be able to access the leaderboard to track
+        how
+        students are doing, or add more questions to the easy or hard category. There is also a ‘manage all question’
+        button
+        to see all the questions, their difficulties and their answers. In case of the question being incorrect, it can
+        be
+        edited or even deleted in this tab.
+        <br><br>To add new questions, click on the ‘Add Easy Qs’ or ‘Add Hard Qs’ buttons. Here there will be a text input box,
+        where you can enter the question to be added, and a model of a venn diagram - click on the sections of the venn
+        diagram to highlight them. Once the venn diagram has been shaded in properly to match the question input, click
+        the
+        ‘Add Question’ button to insert this new question into the list of questions.
+    </h4>
+
+    <br>
+
+    <h3 class="subtitle" style="font-weight: bold;">
+        For Students
+    </h3>
+
+    <h4>
+        Once signed in, the home screen will pop up. On this screen, you will be able to access the leaderboard to track
+        how
+        you and other students are doing, or choose what type of question you would like to work on. Simply choose
+        ‘Easy’ or
+        ‘Hard’ to start doing questions of that difficulty type. Click on the sections of the venn diagram to highlight
+        them
+        according to the question. Once the questions have been completed, click Home in the top right corner to exit
+        back
+        to the home screen.
+    </h4>
+</div>
+<br>
+<br>
+<h2 class="subtitle" style="font-weight: bolder;">
+    Sets Information
+</h2>
+<div class="has-text-left">
+    <h3 class="subtitle" style="font-weight: bold;">
+        Sets
+    </h3>
+    <h4>A set is an unordered collection of different elements. Curly brackets are used to represent sets. Examples of
+        sets
+        contain the set of natural numbers, or the set of odd numbers etc.
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Special Sets
+    </h3>
+    <h4>
+        U - Universal set (the set of all objects under consideration)
+        Sdlkfj - Empty set (the set of no objects)
+        <br><br>
+        A subset:
+        <br>If every element of X is an element of set Y, set X is a subset of subset Y (it is written as X⊆Y)
+        <br><br>
+        For example, if we had set X = {1,2} and set Y = {1,2}, then set X is a subset of Y.
+        Another example would be if we had set X = {1,2} and set Y = {1,2,3,5}. In this case set X is a proper subset of
+        Y.
+        <br>A proper subset is defined as a set that is a subset of another, but not equal to the set. Here, we see that set
+        X and set Y aren’t the same, but set X is a subset - this means it qualifies to be called a ‘proper subset’.
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Set Operation
+    </h3>
+    <h4>
+        Set Operations include Set Union, Set Intersection, Set Difference, Complement of Set, and Cartesian Product.
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Set Union
+    </h3>
+    <h4>
+        The union of sets X and Y is the set of all elements in X and Y (written as X U Y).
+
+        <br>For example, if we let set X = {1,2,3} and set Y = {3,5,6,7,8}, then X U Y = {1,2,3,5,6,7,8}.
+        Notice that set X and set Y both have 3, but X U Y doesn’t have 2 occurrences of 3s. This is because there are
+        no
+        repeated elements in a set.
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Set Intersection
+    </h3>
+    <h4>
+        The intersection of sets X and Y is the set of elements that occur in both X and Y (written as X ∩ Y).
+        <br>For example, if we let set X = {1,2,3,5} and set Y = {3,5,6,7,8}, then X ∩ Y = {3,5}.
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Complement of a Set
+    </h3>
+
+
+    <h4>
+        The complement of a set (shown as X’), is the set of elements which aren’t a part of set X. It can be
+        written as X’ = { x | x ∉ Y }
+        <br>For example, if we let X = the set of all odd numbers, X’ would be the set of all numbers which aren’t odd
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Set Difference
+    </h3>
+
+    <h4>
+        Denoted by X - Y, it is the set of elements which are only in X but not in Y. This can also be written as 
+        <br>X - Y = { x | x ∈ X AND x ∉ Y }.<br>
+        <br>For example, if X = {1,2,3,4,5} and Y = {4,5,6,7,8}, X - Y = {1,2,3}.
+        <br>Y - X = {6,7,8} - - > This shows that (X - Y) ≠ (Y - X)
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Cross Product
+    </h3>
+    <h4>
+        The Cartesian product of two sets X and Y, denoted by X × Y, is the set of all ordered pairs (x,y), such that x
+        is
+        an element of X and y, an element of Y.
+    </h4>
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Venn Diagram
+    </h3>
+
+    <h4>
+        Venn Diagrams are schematic diagrams to show the relationship between sets. We can thus use these to represent
+        the
+        most of the operations from above in a way that makes sense more visually.
+    </h4>
+    <br>
+
+    <h3 class="subtitle" style="font-weight: bold;">
+        Set Union
+    </h3>
+
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column">
+            <img src="/static/tutorial/union.jpg">
+        </div>
+        <div class="column"></div>
+    </div>
+
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Set Intersection
+    </h3>
+
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column">
+            <img src="/static/tutorial/intersection.jpg">
+        </div>
+        <div class="column"></div>
+    </div>
+
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Complement of Set
+    </h3>
+
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column">
+            <img src="/static/tutorial/complement.jpg">
+        </div>
+        <div class="column"></div>
+    </div>
+
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Set Difference
+    </h3>
+
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column">
+            <img src="/static/tutorial/difference.jpg">
+        </div>
+        <div class="column"></div>
+    </div>
+
+    <br>
+    <h3 class="subtitle" style="font-weight: bold;">
+        Boolean Algebra
+    </h3>
+
+    <h4>
+        Logic and set theory are closely related. The union and intersection can be defined in terms of the ‘and’ and
+        ‘or’ operators. Thus, it is important to learn how to simplify boolean algebra when thinking about set theory.
+
+        Here are the laws that can be applied in order to simplify a comp
+        licated boolean expression:
+
+        <br>A U 1 = 1
+        <br>A ∩ 1 = A
+    </h4>
+    <br>
+
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column">
+            <img src="/static/tutorial/algebra.jpg">
+        </div>
+        <div class="column"></div>
+    </div>
+
+    <h4>
+        The line above the letters or expressions is the complement operator (this in terms of logic can be defined
+        using the NOT operator). The image below shows NOT A (or A’ in terms of set notation).
+    </h4>
+    <br>
+    <img src="/static/tutorial/not.jpg">
+    <br><br>
+    <h4>
+        A demonstration on how the laws are used is shown below. Instead of using a line above the letter, I will be
+        using the ¬ symbol to represent the complement operator.
+        <br><br>
+        <strong>¬DF U ¬DFC</strong>
+        <strong><br>= ¬DF ∩ (1 U C)</strong>     ⇐ Here we used the distributive law in reverse
+        <strong><br>= ¬DF ∩ (1)</strong>     ⇐ 1 union C would be equal to 1 as the union of C and everything is just everything
+        <strong><br>= ¬DF</strong>   ⇐ ¬DF intersection 1 would be equal to ¬DF as the intersection of ¬DF and everything is just everything in
+        ¬DF
+        <br><br>
+        From here, we are left with a simple term that cannot be further simplified, which means we have completed our
+        simplification.
+
+    </h4>
+
+</div>
 {% endblock %}
