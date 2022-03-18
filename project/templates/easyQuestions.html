@@ -7,7 +7,7 @@
     <h1 class="subtitle" id="difficulty">
         Difficulty: Easy
     </h1>
-    
+
     <h2 class="subtitle" id="questionNumberWrapper">
         Question Number <span class="subtitle" id="questionNumber"></span>
     </h2>
@@ -25,7 +25,24 @@
 
     <br>
     <div id="butt">
-        <button class="button is-block is-info is-large" id="nextQ">Submit</button>
+        <button class="button is-block is-info is-large js-modal-trigger" data-target="modal-js" id="nextQ">Submit</button>
+    </div>
+
+
+    <div id="modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Answer</p>
+            </header>
+            <section class="modal-card-body">
+                <!-- Content ... -->
+                <h1 class="title" id="isCorrect" style="color: black;">IDK</h1>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="closeModalButt">Next</button>
+            </footer>
+        </div>
     </div>
 
     <h1 class="title" id="completed1">
@@ -146,6 +163,7 @@
 
             var question_number = 0;
             var question_text = ".";
+            var is_correct = false;
 
             document.getElementById("questionNumber").innerHTML = question_number.toString();
             document.getElementById("questionText").innerHTML = question_text;
@@ -163,8 +181,12 @@
                 document.getElementById("nextQ").click();
             };
 
-            $("#clearB").click(function() {
+            $("#clearB").click(function () {
                 chart.select([]);
+            })
+
+            $('#closeModalButt').click(function () {
+                document.getElementById("modal").classList.remove('is-active');                            
             })
 
             $("#nextQ").click(function () {
@@ -186,6 +208,7 @@
                         console.log(response);
                         question_number = response[0];
                         question_text = response[1];
+                        is_correct = response[2];
 
                         if (question_number == "finished") {
                             console.log("completed all questions");
@@ -197,8 +220,8 @@
                             document.getElementById("butt").style.display = "none";
                             document.getElementById("clearB").style.display = "none";
 
-                            document.getElementById("completed1").value = "All Hard Questions Completed.";
-                            document.getElementById("completed2").value = "Come back later to check for more hard questions!";
+                            document.getElementById("completed1").value = "All Easy Questions Completed.";
+                            document.getElementById("completed2").value = "Come back later to check for more easy questions!";
                             document.getElementById("completed1").style.display = "block";
                             document.getElementById("completed2").style.display = "block";
                         }
@@ -207,6 +230,18 @@
                             document.getElementById("completed2").style.display = "none";
                             document.getElementById("questionNumber").innerHTML = question_number.toString();
                             document.getElementById("questionText").innerHTML = question_text;
+                        }
+
+                        if (is_correct) {
+                            document.getElementById("isCorrect").innerHTML = "Correct";
+                            document.getElementById("isCorrect").style.color = "green";
+                            document.getElementById("modal").classList.add('is-active');
+                            
+                        }
+                        else if (is_correct == false) {
+                            document.getElementById("isCorrect").innerHTML = "Incorrect";
+                            document.getElementById("isCorrect").style.color = "red";
+                            document.getElementById("modal").classList.add('is-active');                            
                         }
 
                     },
@@ -228,60 +263,6 @@
 
         });
     </script>
-
-
-
-
-    <!-- <body>
-    <div id="venn"></div>
-</body>
-
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="https://rawgit.com/benfred/venn.js/master/venn.js"></script>
-<script>
-    // define sets and set set intersections
-    var sets = [{ sets: ['A'], size: 12 },
-    { sets: ['B'], size: 12 },
-    { sets: ['C'], size: 12 },
-    { sets: ['A', 'B'], size: 2 },
-    { sets: ['A', 'C'], size: 2 },
-    { sets: ['B', 'C'], size: 2 },
-    { sets: ['A B'], size: 2 }];
-
-    var chart = venn.VennDiagram();
-    var div = d3.select("#venn");
-    div.datum(sets).call(chart);
-    d3.selectAll("#venn .venn-circle path").style("fill-opacity", .2)
-
-    d3.selectAll("#venn .venn-circle")
-        .on("mouseover", function (d, i) {
-            // var node = d3.select(this).transition();
-            // node.select("path").style("fill-opacity", .8);
-            // node.select("text").style("font-weight", "100")
-            //     .style("font-size", "36px");
-
-            venn.sortAreas(div, d);
-            var selection = d3.select(this).transition("tooltip").duration(400);
-            selection.select("path")
-                .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
-                .style("stroke-opacity", 1);
-        })
-        .on("mouseout", function (d, i) {
-            var node = d3.select(this).transition();
-            node.select("path").style("fill-opacity", .2);
-            node.select("text").style("font-weight", "100")
-                .style("font-size", "24px");
-
-        })
-        // .on("click", function (d, i) {
-        //     clicked = !clicked;
-
-        //     var node = d3.select(this).transition();
-        //     node.select("path").style("fill-opacity", .8);
-        //     node.select("text").style("font-weight", "100")
-        //         .style("font-size", "36px");
-        // });
-</script> -->
 
 </body>
 
