@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content%}
+
 <body>
     <h1 class="subtitle" id="difficulty">
         Difficulty: Hard
@@ -16,7 +17,7 @@
     <input class="input is-large" id="answerBox" type="text" name="answer" placeholder="Your Answer">
     <br><br>
     <div id="butt">
-        <button class="button is-block is-info is-large" id="nextQ">Submit</button>
+        <button class="button is-block is-info is-large js-modal-trigger" data-target="modal-js" id="nextQ">Submit</button>
     </div>
     <h1 class="title" id="completed1">
         All Hard Questions Completed.
@@ -26,24 +27,21 @@
         Come back later to check for more hard questions!
     </h2>
 
-    <!-- <form method="POST" action="/hard-questions/{{ question_text }}">
-
-        <h2 class="subtitle" name="question">
-            {{ question_text }}
-        </h2>
-
-        {% if is_editable %}
-        <input class="input is-large" type="text" name="answer" placeholder="Your Answer">
-        {% else %}
-        <input class="input is-large" type="text" name="answer" placeholder="Your Answer" readonly>
-        {% endif %}
-
-        <br>
-        <br>
-        <br>
-
-        <button class="button is-block is-info is-large">Submit</button>
-    </form> -->
+    <div id="modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Answer</p>
+            </header>
+            <section class="modal-card-body">
+                <!-- Content ... -->
+                <h1 class="title" id="isCorrect" style="color: black;">IDK</h1>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="closeModalButt">Next</button>
+            </footer>
+        </div>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
@@ -62,6 +60,11 @@
         window.onload = function () {
             document.getElementById("nextQ").click();
         };
+
+        $('#closeModalButt').click(function () {
+            document.getElementById("modal").classList.remove('is-active');
+        })
+
         $("#nextQ").click(function () {
             document.getElementById("completed1").value = "";
             document.getElementById("completed2").value = "";
@@ -79,6 +82,7 @@
                     console.log(response);
                     question_number = response[0];
                     question_text = response[1];
+                    is_correct = response[2];
 
                     if (question_number == "finished") {
                         console.log("completed all questions");
@@ -99,6 +103,18 @@
                         document.getElementById("questionNumber").innerHTML = question_number.toString();
                         document.getElementById("questionText").innerHTML = question_text;
 
+                    }
+
+                    if (is_correct) {
+                        document.getElementById("isCorrect").innerHTML = "Correct";
+                        document.getElementById("isCorrect").style.color = "green";
+                        document.getElementById("modal").classList.add('is-active');
+
+                    }
+                    else if (is_correct == false) {
+                        document.getElementById("isCorrect").innerHTML = "Incorrect";
+                        document.getElementById("isCorrect").style.color = "red";
+                        document.getElementById("modal").classList.add('is-active');
                     }
 
                 },

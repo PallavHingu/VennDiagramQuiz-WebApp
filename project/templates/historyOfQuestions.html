@@ -9,37 +9,33 @@
         <tr>
             <th>Id</th>
             <th>User Name</th>
-            <th>Question Id</th>
+            <th>Question</th>
             <th>Correct</th>
-        </tr>
-        <tr>
-            <th>
-                <input class="input" >
-            </th>
-            <th>
-                <div class="control">
-                    <div class="select">
-                        <select>
-                            <option selected>All</option>
-                            <option>Easy</option>
-                            <option>Hard</option>
-                        </select>
-                    </div>
-                </div>
-            <th>
-            <th>
-                
-            </th>
-
         </tr>
     </thead>
     <tbody>
         {% for h in history %}
         <tr>
             <td>{{h.id}}</td>
-            <td>{{h.user_id}}</td>
-            <td>{{h.question_id}}</td>
-            <td>{{h.correct}}</td>
+            {% for u in users %}
+                {% if u.id == h.user_id %}
+                    <td>{{u.name}}</td>
+                {% endif %}
+            {% endfor %}
+
+            {% for q in questions %}
+                {% if q.id == h.question_id %}
+                    <td>{{q.question}}</td>
+                {% endif %}
+            {% endfor %}
+
+            {% if h.correct == 1 %}
+                <td><img src="https://www.freepnglogos.com/uploads/tick-png/check-mark-tick-vector-graphic-21.png" style="width:1em;"/></td>
+            {% else %}
+                <td><img src="https://image.similarpng.com/very-thumbnail/2020/11/Red-incorrect-icon-design-on-transparent-background-PNG.png" style="width:1em;"/></td>
+            {% endif %}
+            
+            
             
         </tr>
         {% endfor %}

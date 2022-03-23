@@ -9,7 +9,7 @@
     </h1>
 
 
-    <input class="input is-block is-large" id="questionText" name="question" value="{{question.question}}" readonly>
+    <input class="input is-block is-large" id="questionText" name="question" value="{{question.question}}">
     <br>
 
     {% if (question.difficulty == 0): %}
@@ -142,9 +142,7 @@
 
 
     </script>
-    {% else: %}
-    <input class="input is-block is-large" id="questionText" name="question" value="{{question.answer}}" readonly>
-    {%endif%}
+
     <br>
 
     <div class="columns">
@@ -185,7 +183,51 @@
             });
         })
     </script>
+    {% else: %}
+    <input class="input is-block is-large" id="answer" name="answer" value="{{question.answer}}">
+    <br>
 
+    <div class="columns">
+        <div class="column">
+            <button class="button is-block is-info is-large" id="goBack"
+                onclick="window.location.href='/allQuestions'">Back</button>
+        </div>
+        <div class="column">
+            <button class="button is-block is-info is-large" id="save">Save</button>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        $("#save").click(function () {
+            console.log("clicked");
+            var input_answer = document.getElementById('answer').value;
+            var difficulty = 1;
+            question_text = document.getElementById('questionText').value;
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            $.ajax({
+                url: "/updQs",
+                type: "POST",
+                data: { question_id: urlParams.get("id"), question_text: question_text, input_answer: input_answer, difficulty: difficulty },
+                success: function (response) {
+                    console.log(response);
+                    // reset Qs box and chart selection
+                    if (response == "Q Added") {
+                        window.location.replace("/allQuestions");
+                    }
+
+                },
+                error: function (xhr) {
+                    console.log(error);
+                }
+            });
+        })
+    </script>
+
+    {%endif%}
 </body>
 
 

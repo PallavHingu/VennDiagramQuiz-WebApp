@@ -1,3 +1,5 @@
+from cmath import log
+from crypt import methods
 import random
 from functools import wraps
 from urllib import response
@@ -125,7 +127,7 @@ def hardQuestions1():
         db.session.commit()
 
         if len(left_questions_ids) == 0:
-            return jsonify(["finished", "finished"])
+            return jsonify(["finished", "finished", is_correct])
 
         this_Q_id = random.choice(left_questions_ids)
         print("this_Q_id", this_Q_id)
@@ -141,6 +143,7 @@ def hardQuestions1():
         this_Q_id = random.choice(left_questions_ids)
         this_Q = Questions.query.filter_by(id=this_Q_id).first()
         this_Q_text = this_Q.question
+        is_correct = None
 
 
     
@@ -151,13 +154,14 @@ def hardQuestions1():
     left_questions_ids = list(set(all_existing_qs_ids) - set(all_done_qs_ids))
 
     if len(left_questions_ids) == 0:
-        return jsonify(["finished", "finished"])
+        return jsonify(["finished", "finished", is_correct])
 
 
     data_list = []
 
     data_list.append(this_Q_num)
     data_list.append(this_Q_text)
+    data_list.append(is_correct)
 
     return jsonify(data_list)
 
@@ -166,7 +170,6 @@ def hardQuestions1():
 @login_required
 def hardQuestions():
     return render_template('hardQuestions.html')
-
 
 
 @main.route('/easy-questions')
@@ -265,6 +268,26 @@ def easyQuestions1():
 
     return jsonify(data_list)
 
+
+@main.route("/addPoints", methods=["POST"])
+@login_required
+def addPoints():
+    data = {}
+    for key, value in request.form.items():
+        data[key] = value
+
+    try:
+        points = data["points"]
+        print(">>> before points", current_user.points)
+        current_user.points = points
+        db.session.commit()
+        print(">>> after points", current_user.points)
+        return "added points"
+    except Exception as e:
+        print("error: ", e)
+        return e
+    
+
 @main.route('/add-easy-questions')
 @login_required
 @teacher_required
@@ -310,7 +333,8 @@ def updateQuestion():
         if (len(data["question_text"]) > 0):
             new_q = Questions(id=data["question_id"], question = data["question_text"], answer=data["input_answer"], difficulty=data["difficulty"])
             old_q = Questions.query.filter_by(id=data["question_id"]).first()
-            old_q = new_q
+            old_q.question = new_q.question
+            old_q.answer = new_q.answer
             db.session.commit()
             return "Q Added"
         else:
@@ -377,8 +401,12 @@ def deleteQuestion1():
 @teacher_required
 def historyQuestions():
     history = History.query.all()
+    users = User.query.all()
+    questions = Questions.query.all()
     print("All QS history: ", history)
-    return render_template("historyOfQuestions.html", history=history)
+    print("All Users: ", users)
+    print("All Questions: ", questions)
+    return render_template("historyOfQuestions.html", history=history, users=users, questions=questions)
 
 @main.route("/manageUsers")
 @login_required
@@ -409,7 +437,6 @@ def editUser(userId):
     else:
         user = User.query.filter_by(id=userId).first()
         return render_template("editUser.html", user=user)
-
 
 
 @main.route("/editUser", methods=["POST"])
@@ -457,20 +484,3 @@ def editUserPost():
     db.session.commit()
 
     return "User Updated"
-
-
-# @main.route('/hard-questions/<question_text>', methods=["POST"])
-# @login_required
-# def hardQuestions_check(question_text):
-#     question = Questions.query.filter_by(question=question_text).first()
-#     question_answer = question.answer
-#     user_answer = request.form.get('answer')
-#     print("USER", user_answer)
-#     print("ACTUAL", question_answer)
-
-#     if user_answer == question_answer:
-#         print(">>>>>>>>>>CORRECT Answer!")
-#         return "CHECKED"
-    
-#     print(">>>>>>>>>>WRONG Answer!")
-#     return "CHECKED"

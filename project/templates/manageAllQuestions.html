@@ -15,31 +15,6 @@
             <th></th>
             <th></th>
         </tr>
-        <tr>
-            <th>
-                <input class="input" size="2">
-            </th>
-            <th>
-                <div class="control">
-                    <div class="select">
-                        <select>
-                            <option selected>All</option>
-                            <option>Easy</option>
-                            <option>Hard</option>
-                        </select>
-                    </div>
-                </div>
-            </th>
-            <th>
-                <input class="input">
-            </th>
-            <th>
-                <input class="input">
-            </th>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
     </thead>
     <tbody>
         {% for q in questions %}
@@ -52,7 +27,6 @@
             <td><a href="/editQuestion?id={{q.id}}">edit</a></td>
             <td><form action="/delQ?id={{q.id}}" method="POST">
                 <a href="#" onclick="this.parentNode.submit()">delete</a>
-                
                 </form></td>
         </tr>
         {% endfor %}
