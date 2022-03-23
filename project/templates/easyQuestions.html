@@ -49,10 +49,7 @@
     </style>
 
 
-
-
-
-    <div class="columns">
+    <div class="columns" id="column1">
         <div class="column"></div>
         <div class="column">
             <h1 class="subtitle" id="difficulty">
@@ -106,6 +103,7 @@
             <section class="modal-card-body">
                 <!-- Content ... -->
                 <h1 class="title" id="isCorrect" style="color: black;">IDK</h1>
+                <div id="container2" ></div>
             </section>
             <footer class="modal-card-foot">
                 <button class="button is-success" id="closeModalButt">Next</button>
@@ -190,24 +188,30 @@
             // create venn diagram
             var chart = anychart.venn(data);
 
+
             // set chart stroke
             chart.stroke('2 #fff');
             chart.background().stroke("transparent");
             chart.background().fill("grey 0.05");
 
+
             // disable legend
             chart.legend(false);
+
 
             chart.tooltip(false);
             chart.intersections().labels(false);
             chart.intersections().labels(false);
 
 
+
             // set container id for the chart
             chart.container('container');
 
+
             // initiate chart drawing
             chart.draw();
+
 
             chart.listen("pointsSelect", function (e) {
                 // console.log("clicked something " + e.iterator.get("x"));
@@ -226,13 +230,20 @@
                 console.log("LIST: " + selected_list.toString());
             });
 
-
-
+            var chartAns = anychart.venn(data);
+            chartAns.stroke('2 #fff');
+            chartAns.background().stroke("transparent");
+            chartAns.background().fill("grey 0.05");
+            chartAns.legend(false);
+            chartAns.tooltip(false);
+            chartAns.intersections().labels(false);
+            chartAns.intersections().labels(false);
+            chartAns.container('container2');
+            chartAns.draw();
 
             var question_number = 0;
             var question_text = ".";
             var is_correct = false;
-            var cumulative_points = 0;
 
             document.getElementById("questionNumber").innerHTML = question_number.toString();
             document.getElementById("questionText").innerHTML = question_text;
@@ -253,96 +264,6 @@
             $("#clearB").click(function () {
                 chart.select([]);
             })
-
-            $('#closeModalButt').click(function () {
-                document.getElementById("modal").classList.remove('is-active');
-            })
-
-            $("#nextQ").click(function () {
-                document.getElementById("completed1").value = "";
-                document.getElementById("completed2").value = "";
-
-                var input_answer = selected_list.toString();
-                // clear chart selection
-                chart.select([]);
-                var data_list = [question_number, question_text, input_answer];
-                console.log(data_list);
-
-
-                $.ajax({
-                    url: "/easyQuestions",
-                    type: "POST",
-                    data: { question_number: question_number, question_text: question_text, input_answer: input_answer },
-                    success: function (response) {
-                        console.log(response);
-                        question_number = response[0];
-                        question_text = response[1];
-                        is_correct = response[2];
-
-                        if (question_number == "finished") {
-                            console.log("completed all questions");
-                            document.getElementById("difficulty").style.display = "none";
-                            document.getElementById("questionNumberWrapper").style.display = "none";
-                            document.getElementById("questionNumber").style.display = "none";
-                            document.getElementById("questionText").style.display = "none";
-                            document.getElementById("container").style.display = "none";
-                            document.getElementById("butt").style.display = "none";
-                            document.getElementById("clearB").style.display = "none";
-
-                            document.getElementById("completed1").value = "All Easy Questions Completed.";
-                            document.getElementById("completed2").value = "Come back later to check for more easy questions!";
-                            document.getElementById("completed1").style.display = "block";
-                            document.getElementById("completed2").style.display = "block";
-                        }
-                        else {
-                            document.getElementById("completed1").style.display = "none";
-                            document.getElementById("completed2").style.display = "none";
-                            document.getElementById("questionNumber").innerHTML = question_number.toString();
-                            document.getElementById("questionText").innerHTML = question_text;
-                        }
-
-                        if (is_correct) {
-                            document.getElementById("isCorrect").innerHTML = "Correct";
-                            document.getElementById("isCorrect").style.color = "green";
-                            document.getElementById("modal").classList.add('is-active');
-                            cumulative_points = cumulative_points + 10;
-                        }
-                        else if (is_correct == false) {
-                            document.getElementById("isCorrect").innerHTML = "Incorrect";
-                            document.getElementById("isCorrect").style.color = "red";
-                            document.getElementById("modal").classList.add('is-active');
-                        }
-
-                    },
-                    error: function (xhr) {
-                        console.log(error);
-                    }
-                });
-            })
-
-            window.addEventListener("pageshow", function (event) {
-                var historyTraversal = event.persisted ||
-                    (typeof window.performance != "undefined" &&
-                        window.performance.navigation.type === 2);
-                if (historyTraversal) {
-                    // Handle page restore.
-                    window.location.reload();
-                }
-            });
-
-            function sendPointsAtEndOfTime(points) {
-                $.ajax({
-                    url: "/addPoints",
-                    type: "POST",
-                    data: { points: points },
-                    success: function (response) {
-                        console.log(response);
-                    },
-                    error: function (xhr) {
-                        console.log(error);
-                    }
-                });
-            }
 
             function getTimeRemaining(endtime) {
                 const total = Date.parse(endtime) - Date.parse(new Date());
@@ -377,10 +298,8 @@
 
                     if (t.total <= 0) {
                         clearInterval(timeinterval);
-                        // when timer finishes, add points and redirect to home
-                        sendPointsAtEndOfTime(cumulative_points);
-                        window.alert("You have run out of time! Click 'OK' to return to home.");
-                        window.location.replace("/home");
+                        // when timer finishes, click next button
+                        document.getElementById("nextQ").click();
                     }
                 }
 
@@ -390,6 +309,94 @@
 
             const deadline = new Date(Date.parse(new Date()) + 1 * 10 * 1000);
             initializeClock('clockdiv', deadline);
+
+            $('#closeModalButt').click(function () {
+                const deadline = new Date(Date.parse(new Date()) + 1 * 10 * 1000);
+                initializeClock('clockdiv', deadline);
+                document.getElementById("modal").classList.remove('is-active');
+            })
+
+            $("#nextQ").click(function () {
+                document.getElementById("completed1").value = "";
+                document.getElementById("completed2").value = "";
+
+                var input_answer = selected_list.toString();
+                // clear chart selection
+                chart.select([]);
+                var data_list = [question_number, question_text, input_answer];
+                console.log(data_list);
+
+                $.ajax({
+                    url: "/easyQuestions",
+                    type: "POST",
+                    data: { question_number: question_number, question_text: question_text, input_answer: input_answer },
+                    success: function (response) {
+                        console.log(response);
+                        question_number = response[0];
+                        question_text = response[1];
+                        is_correct = response[2];
+                        
+
+                        if (question_number == "finished") {
+                            console.log("completed all questions");
+                            document.getElementById("difficulty").style.display = "none";
+                            document.getElementById("questionNumberWrapper").style.display = "none";
+                            document.getElementById("questionNumber").style.display = "none";
+                            document.getElementById("questionText").style.display = "none";
+                            document.getElementById("container").style.display = "none";
+                            document.getElementById("butt").style.display = "none";
+                            document.getElementById("clearB").style.display = "none";
+                            document.getElementById("clockdiv").style.display = "none";
+                            document.getElementById("column1").style.display = "none";
+
+
+                            document.getElementById("completed1").value = "All Easy Questions Completed.";
+                            document.getElementById("completed2").value = "Come back later to check for more easy questions!";
+                            document.getElementById("completed1").style.display = "block";
+                            document.getElementById("completed2").style.display = "block";
+                        }
+                        else {
+                            document.getElementById("completed1").style.display = "none";
+                            document.getElementById("completed2").style.display = "none";
+                            document.getElementById("questionNumber").innerHTML = question_number.toString();
+                            document.getElementById("questionText").innerHTML = question_text;
+                            var correctAnsSelectString = response[3];
+                        }
+
+                        if (is_correct) {
+                            document.getElementById("isCorrect").innerHTML = "Correct";
+                            document.getElementById("isCorrect").style.color = "green";
+                            document.getElementById("modal").classList.add('is-active');
+                            document.getElementById("container2").style.display = "none";
+                        }
+                        else if (is_correct == false) {
+                            document.getElementById("isCorrect").innerHTML = "Incorrect";
+                            document.getElementById("isCorrect").style.color = "red";
+                            document.getElementById("modal").classList.add('is-active');
+                            document.getElementById("container2").style.display = "block";
+                            console.log(correctAnsSelectString);
+                            console.log(typeof(correctAnsSelectString));
+                            var correctAnsSelect = JSON.parse('[' + correctAnsSelectString + ']');
+                            chartAns.select(correctAnsSelect);
+                        }
+
+                    },
+                    error: function (xhr) {
+                        console.log(error);
+                    }
+                });
+            })
+
+            window.addEventListener("pageshow", function (event) {
+                var historyTraversal = event.persisted ||
+                    (typeof window.performance != "undefined" &&
+                        window.performance.navigation.type === 2);
+                if (historyTraversal) {
+                    // Handle page restore.
+                    window.location.reload();
+                }
+            });
+
         });
     </script>
 

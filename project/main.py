@@ -113,7 +113,7 @@ def hardQuestions1():
         if last_Q_answer == data['input_answer']:
             # what happens when right answer
             print("CORRECT ANSWER")
-            current_user.points += 100
+            current_user.points += 20
             db.session.commit()
             is_correct = True
         else:
@@ -127,7 +127,7 @@ def hardQuestions1():
         db.session.commit()
 
         if len(left_questions_ids) == 0:
-            return jsonify(["finished", "finished", is_correct])
+            return jsonify(["finished", "finished", is_correct, last_Q_answer])
 
         this_Q_id = random.choice(left_questions_ids)
         print("this_Q_id", this_Q_id)
@@ -144,6 +144,7 @@ def hardQuestions1():
         this_Q = Questions.query.filter_by(id=this_Q_id).first()
         this_Q_text = this_Q.question
         is_correct = None
+        last_Q_answer = ""
 
 
     
@@ -154,7 +155,7 @@ def hardQuestions1():
     left_questions_ids = list(set(all_existing_qs_ids) - set(all_done_qs_ids))
 
     if len(left_questions_ids) == 0:
-        return jsonify(["finished", "finished", is_correct])
+        return jsonify(["finished", "finished", is_correct, last_Q_answer])
 
 
     data_list = []
@@ -162,6 +163,7 @@ def hardQuestions1():
     data_list.append(this_Q_num)
     data_list.append(this_Q_text)
     data_list.append(is_correct)
+    data_list.append(last_Q_answer)
 
     return jsonify(data_list)
 
@@ -220,7 +222,7 @@ def easyQuestions1():
         if last_Q_answer == data['input_answer']:
             # what happens when right answer
             print("CORRECT ANSWER")
-            current_user.points += 50
+            current_user.points += 10
             db.session.commit()
             is_correct = True
         else:
@@ -234,7 +236,7 @@ def easyQuestions1():
         db.session.commit()
 
         if len(left_questions_ids) == 0:
-            return jsonify(["finished", "finished", is_correct])
+            return jsonify(["finished", "finished", is_correct, last_Q_answer])
 
         this_Q_id = random.choice(left_questions_ids)
         print("this_Q_id", this_Q_id)
@@ -250,6 +252,7 @@ def easyQuestions1():
         this_Q = Questions.query.filter_by(id=this_Q_id).first()
         this_Q_text = this_Q.question
         is_correct = None
+        last_Q_answer = ""
 
     all_done_qs = History.query.filter_by(user_id=current_user.id).all()
     all_done_qs_ids = []
@@ -258,13 +261,14 @@ def easyQuestions1():
     left_questions_ids = list(set(all_existing_qs_ids) - set(all_done_qs_ids))
 
     if len(left_questions_ids) == 0:
-        return jsonify(["finished", "finished", is_correct])
+        return jsonify(["finished", "finished", is_correct, last_Q_answer])
 
     data_list = []
 
     data_list.append(this_Q_num)
     data_list.append(this_Q_text)
     data_list.append(is_correct)
+    data_list.append(last_Q_answer)
 
     return jsonify(data_list)
 

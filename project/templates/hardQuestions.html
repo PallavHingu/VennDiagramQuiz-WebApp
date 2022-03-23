@@ -3,9 +3,70 @@
 {% block content%}
 
 <body>
-    <h1 class="subtitle" id="difficulty">
-        Difficulty: Hard
-    </h1>
+    <style>
+        body {
+            text-align: center;
+            background: #00ECB9;
+            font-family: sans-serif;
+            font-weight: 100;
+        }
+
+        h1 {
+            color: #396;
+            font-weight: 100;
+            font-size: 40px;
+            margin: 40px 0px 20px;
+        }
+
+        #clockdiv {
+            font-family: sans-serif;
+            color: #fff;
+            display: inline-block;
+            font-weight: 100;
+            text-align: center;
+            font-size: 23px;
+        }
+
+        #clockdiv>div {
+            padding: 3px;
+            border-radius: 3px;
+            background: #00BF96;
+            display: inline-block;
+        }
+
+        #clockdiv div>span {
+            padding: 9px;
+            border-radius: 3px;
+            background: #00816A;
+            display: inline-block;
+        }
+
+        .smalltext {
+            padding-top: 5px;
+            font-size: 16px;
+        }
+    </style>
+
+    <div class="columns" id="column1">
+        <div class="column"></div>
+        <div class="column">
+            <h1 class="subtitle" id="difficulty">
+                Difficulty: Easy
+            </h1>
+        </div>
+        <div class="column">
+            <div id="clockdiv">
+                <div>
+                    <span class="minutes"></span>
+                    <div class="smalltext">Minutes</div>
+                </div>
+                <div>
+                    <span class="seconds"></span>
+                    <div class="smalltext">Seconds</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <h2 class="subtitle" id="questionNumberWrapper">
         Question Number <span class="subtitle" id="questionNumber"></span>
@@ -17,7 +78,8 @@
     <input class="input is-large" id="answerBox" type="text" name="answer" placeholder="Your Answer">
     <br><br>
     <div id="butt">
-        <button class="button is-block is-info is-large js-modal-trigger" data-target="modal-js" id="nextQ">Submit</button>
+        <button class="button is-block is-info is-large js-modal-trigger" data-target="modal-js"
+            id="nextQ">Submit</button>
     </div>
     <h1 class="title" id="completed1">
         All Hard Questions Completed.
@@ -36,6 +98,7 @@
             <section class="modal-card-body">
                 <!-- Content ... -->
                 <h1 class="title" id="isCorrect" style="color: black;">IDK</h1>
+                <p class="subtitle" id="correctAns" style="color: green;"></p>
             </section>
             <footer class="modal-card-foot">
                 <button class="button is-success" id="closeModalButt">Next</button>
@@ -61,8 +124,55 @@
             document.getElementById("nextQ").click();
         };
 
+        function getTimeRemaining(endtime) {
+            const total = Date.parse(endtime) - Date.parse(new Date());
+            const seconds = Math.floor((total / 1000) % 60);
+            const minutes = Math.floor((total / 1000 / 60) % 60);
+            // const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+            // const days = Math.floor(total / (1000 * 60 * 60 * 24));
+
+            return {
+                total,
+                // days,
+                // hours,
+                minutes,
+                seconds
+            };
+        }
+
+        function initializeClock(id, endtime) {
+            const clock = document.getElementById(id);
+            // const daysSpan = clock.querySelector('.days');
+            // const hoursSpan = clock.querySelector('.hours');
+            const minutesSpan = clock.querySelector('.minutes');
+            const secondsSpan = clock.querySelector('.seconds');
+
+            function updateClock() {
+                const t = getTimeRemaining(endtime);
+
+                // daysSpan.innerHTML = t.days;
+                // hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+                minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+                secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+                if (t.total <= 0) {
+                    clearInterval(timeinterval);
+                    // when timer finishes, click next button
+                    document.getElementById("nextQ").click();
+                }
+            }
+
+            updateClock();
+            const timeinterval = setInterval(updateClock, 1000);
+        }
+
+        const deadline = new Date(Date.parse(new Date()) + 1 * 10 * 1000);
+        initializeClock('clockdiv', deadline);
+
         $('#closeModalButt').click(function () {
             document.getElementById("modal").classList.remove('is-active');
+            const deadline = new Date(Date.parse(new Date()) + 1 * 10 * 1000);
+            initializeClock('clockdiv', deadline);
         })
 
         $("#nextQ").click(function () {
@@ -83,6 +193,7 @@
                     question_number = response[0];
                     question_text = response[1];
                     is_correct = response[2];
+                    correctAns = response[3];
 
                     if (question_number == "finished") {
                         console.log("completed all questions");
@@ -92,6 +203,9 @@
                         document.getElementById("questionText").style.display = "none";
                         document.getElementById("answerBox").style.display = "none";
                         document.getElementById("butt").style.display = "none";
+                        document.getElementById("clockdiv").style.display = "none";
+                        document.getElementById("column1").style.display = "none";
+
                         document.getElementById("completed1").value = "All Hard Questions Completed.";
                         document.getElementById("completed2").value = "Come back later to check for more hard questions!";
                         document.getElementById("completed1").style.display = "block";
@@ -109,12 +223,13 @@
                         document.getElementById("isCorrect").innerHTML = "Correct";
                         document.getElementById("isCorrect").style.color = "green";
                         document.getElementById("modal").classList.add('is-active');
-
+                        document.getElementById('correctAns').innerHTML = "";
                     }
                     else if (is_correct == false) {
                         document.getElementById("isCorrect").innerHTML = "Incorrect";
                         document.getElementById("isCorrect").style.color = "red";
                         document.getElementById("modal").classList.add('is-active');
+                        document.getElementById("correctAns").innerHTML = "Correct Answer: " + correctAns;
                     }
 
                 },
