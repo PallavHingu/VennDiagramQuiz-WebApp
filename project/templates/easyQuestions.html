@@ -259,6 +259,7 @@
 
             window.onload = function () {
                 document.getElementById("nextQ").click();
+                document.getElementById("closeModalButt").click();
             };
 
             $("#clearB").click(function () {
@@ -295,6 +296,14 @@
                     // hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
                     minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
                     secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+                    $("#nextQ").click(function () {
+                        clearInterval(timeinterval);
+                    })
+
+                    $('#closeModalButt').click(function () {
+                        setInterval(timeinterval, 1000);
+                    })
 
                     if (t.total <= 0) {
                         clearInterval(timeinterval);
